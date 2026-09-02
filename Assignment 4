@@ -1,0 +1,157 @@
+import pandas as pd
+
+1- roll_no = input("Enter your college roll number: ")
+
+last_two_digits = roll_no[-2:]
+categories = ["billing", "account", "general"]
+
+fixed_entries = [
+    {
+        "question": "what is the annual fee",
+        "answer": "The annual fee is Rs 500.",
+        "keywords": "fee cost price charge",
+        "category": "billing"
+    },
+    {
+        "question": "how to reset password",
+        "answer": "Go to Settings > Reset Password.",
+        "keywords": "password reset login",
+        "category": "account"
+    },
+    {
+        "question": "what are your working hours",
+        "answer": "We are open 9 AM to 5 PM.",
+        "keywords": "hours timing open time",
+        "category": "general"
+    },
+    {
+        "question": "how can i pay the fee",
+        "answer": "You can pay via UPI, card, or net banking.",
+        "keywords": "pay payment upi fee",
+        "category": "billing"
+    }
+]
+
+personalized_entries = []
+
+for digit in last_two_digits:
+    d = int(digit)
+    category = categories[d % 3]
+
+    if category == "billing":
+        question = "how can i check my billing details"
+        answer = "You can check your billing details from the Billing section."
+        keywords = "billing bill amount payment"
+
+    elif category == "account":
+        question = "how do i update my registered mobile number"
+        answer = "Go to Account Settings and update your registered mobile number."
+        keywords = "mobile number account update"
+
+    else:
+        question = "how can i contact customer support"
+        answer = "You can contact customer support during working hours."
+        keywords = "support help contact"
+
+    personalized_entries.append({
+        "question": question,
+        "answer": answer,
+        "keywords": keywords,
+        "category": category
+    })
+
+df = pd.DataFrame(fixed_entries + personalized_entries)
+
+print("\nQ1: Final DataFrame")
+print(df)
+
+
+2- def score_query(query, df):
+    query_words = set(query.lower().split())
+    results = []
+
+    for index, row in df.iterrows():
+        keyword_words = set(row["keywords"].lower().split())
+        score = len(query_words.intersection(keyword_words))
+
+        if score > 0:
+            results.append({
+                "index": index,
+                "question": row["question"],
+                "answer": row["answer"],
+                "category": row["category"],
+                "score": score
+            })
+
+    return sorted(results, key=lambda x: x["score"], reverse=True)
+
+
+print("\nQ2:")
+query = input("Enter query: ")
+print(score_query(query, df))
+
+
+3- def same_category(category_name, df):
+    return df[df["category"].str.lower() == category_name.lower()]
+
+print("\nQ3:")
+print(same_category(personalized_entries[0]["category"], df))
+
+
+4- print("\nQ4:")
+new_keyword = input("Enter new keyword: ")
+
+df.loc[0, "keywords"] += " " + new_keyword
+
+df.to_csv("_faq_data.csv", index=False)
+
+print("Saved to _faq_data.csv")
+
+
+5- print("\nQ5:")
+print(df.groupby("category").size())
+
+
+6- def score_query_with_ties(query, df):
+    query_words = set(query.lower().split())
+    results = []
+
+    for index, row in df.iterrows():
+        keyword_words = set(row["keywords"].lower().split())
+        score = len(query_words.intersection(keyword_words))
+
+        if score > 0:
+            results.append({
+                "index": index,
+                "question": row["question"],
+                "answer": row["answer"],
+                "category": row["category"],
+                "score": score
+            })
+
+    if not results:
+        print("No matching entries found.")
+        return
+
+    highest_score = max(r["score"] for r in results)
+
+    best_matches = [
+        r for r in results
+        if r["score"] == highest_score
+    ]
+
+    if len(best_matches) > 1:
+        print("\nTie detected!")
+
+    for r in best_matches:
+        print("\nQuestion:", r["question"])
+        print("Answer:", r["answer"])
+        print("Category:", r["category"])
+        print("Score:", r["score"])
+
+
+print("\nQ6: Tie example")
+score_query_with_ties("fee", df)
+
+print("\nQ6: No-tie example")
+score_query_with_ties("password", df)
