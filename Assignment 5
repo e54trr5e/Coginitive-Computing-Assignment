@@ -1,0 +1,140 @@
+import numpy as np
+
+1- arr1 = np.array([10, 20, 30, 40, 50])
+
+print("Original Array:", arr1)
+
+# a) Addition of 2
+print("After adding 2:", arr1 + 2)
+
+# b) Multiply 3 with all elements
+print("After multiplying by 3:", arr1 * 3)
+
+# c) Divide every element by 2
+print("After dividing by 2:", arr1 / 2)
+
+
+2- (a) Reverse the array
+arr = np.array([1, 2, 3, 6, 4, 5])
+
+print("\nOriginal Array:", arr)
+print("Reversed Array:", arr[::-1])
+
+
+(b)(i) Most frequent value and indices in x
+x = np.array([1, 2, 3, 4, 5, 1, 2, 1, 1, 1])
+
+values, counts = np.unique(x, return_counts=True)
+max_count = np.max(counts)
+
+most_frequent = values[counts == max_count]
+
+print("\nArray x:", x)
+print("Most Frequent Value:", most_frequent)
+
+for value in most_frequent:
+    print("Indices of", value, ":", np.where(x == value)[0])
+
+
+(b)(ii) Most frequent value and indices in y
+y = np.array([1, 1, 1, 2, 3, 4, 2, 4, 3, 3])
+
+values, counts = np.unique(y, return_counts=True)
+max_count = np.max(counts)
+
+most_frequent = values[counts == max_count]
+
+print("\nArray y:", y)
+print("Most Frequent Value:", most_frequent)
+
+for value in most_frequent:
+    print("Indices of", value, ":", np.where(y == value)[0])
+
+
+3- arr2 = np.array([
+    [10, 20, 30],
+    [40, 50, 60],
+    [70, 80, 90]
+])
+
+print("2-D Array:")
+print(arr2)
+
+# a) Access 1st row, 2nd column
+print("\n1st row, 2nd column:", arr2[0, 1])
+
+# b) Access 3rd row, 1st column
+print("3rd row, 1st column:", arr2[2, 0])
+
+
+4- Krrish = np.linspace(10, 100, 25)
+
+print("Array:")
+print(Krrish)
+
+# Dimensions
+print("\nDimensions:", Krrish.ndim)
+
+# Shape
+print("Shape:", Krrish.shape)
+
+# Total elements
+print("Total Elements:", Krrish.size)
+
+# Data type
+print("Data Type:", Krrish.dtype)
+
+# Total bytes
+print("Total Bytes:", Krrish.nbytes)
+
+# Transpose using reshape
+Krrish_reshaped = Krrish.reshape(25, 1)
+
+print("\nArray reshaped to 25 x 1:")
+print(Krrish_reshaped)
+
+# Transpose using T attribute
+print("\nTranspose using T attribute:")
+print(Krrish_reshaped.T)
+
+print("\nNote: T does not change a 1-D array directly.")
+print("After converting it to 2-D using reshape(), T can transpose it.")
+
+
+5- ucs420_Krrish = np.array([
+    [10, 20, 30, 40],
+    [50, 60, 70, 80],
+    [90, 15, 20, 35]
+])
+
+print("Original 3 x 4 Array:")
+print(ucs420_Krrish)
+
+# Mean
+print("\nMean:", np.mean(ucs420_Krrish))
+
+# Median
+print("Median:", np.median(ucs420_Krrish))
+
+# Maximum
+print("Maximum:", np.max(ucs420_Krrish))
+
+# Minimum
+print("Minimum:", np.min(ucs420_Krrish))
+
+# Unique elements
+print("Unique Elements:", np.unique(ucs420_Krrish))
+
+
+# Reshape to 4 rows and 3 columns
+reshaped_ucs420_Krrish = ucs420_Krrish.reshape(4, 3)
+
+print("\nReshaped Array (4 x 3):")
+print(reshaped_ucs420_Krrish)
+
+
+# Resize to 2 rows and 3 columns
+resized_ucs420_Krrish = np.resize(ucs420_Krrish, (2, 3))
+
+print("\nResized Array (2 x 3):")
+print(resized_ucs420_Krrish)
