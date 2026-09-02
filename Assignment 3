@@ -1,0 +1,161 @@
+1- import pandas as pd
+
+data = {
+    "Tid": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "Refund": ["Yes", "No", "No", "Yes", "No", "No", "Yes", "No", "No", "No"],
+    "Marital Status": [
+        "Single", "Married", "Single", "Married", "Divorced",
+        "Married", "Divorced", "Single", "Married", "Single"
+    ],
+    "Taxable Income": ["125K", "100K", "70K", "120K", "95K", "60K", "220K", "85K", "75K", "90K"],
+    "Cheat": ["No", "No", "No", "No", "Yes", "No", "No", "Yes", "No", "Yes"]
+}
+
+df = pd.DataFrame(data)
+
+print(df)
+
+2- import pandas as pd
+
+data = {
+    "Tid": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "Refund": ["Yes", "No", "No", "Yes", "No", "No", "Yes", "No", "No", "No"],
+    "Marital Status": [
+        "Single", "Married", "Single", "Married", "Divorced",
+        "Married", "Divorced", "Single", "Married", "Single"
+    ],
+    "Taxable Income": ["125K", "100K", "70K", "120K", "95K",
+                       "60K", "220K", "85K", "75K", "90K"],
+    "Cheat": ["No", "No", "No", "No", "Yes", "No", "No", "Yes", "No", "Yes"]
+}
+
+df = pd.DataFrame(data)
+
+# Locate rows 0, 4, 7 and 8
+print(df.iloc[[0, 4, 7, 8]])
+
+3-  i) print(df.iloc[3:8])
+   ii) print(df.iloc[4:9, 2:5])
+  iii) print(df.iloc[:, 1:4])
+
+4- import pandas as pd
+
+df = pd.read_csv("Iris.csv")
+
+print(df.head())
+
+5- import pandas as pd
+
+df = pd.read_csv("Iris.csv")
+
+# Delete row with index 4
+df = df.drop(index=4)
+
+# Delete column with index 3
+df = df.drop(df.columns[3], axis=1)
+
+print(df)
+
+6- import pandas as pd
+
+# Read the dataset
+df = pd.read_csv("employees.csv")
+
+# a) Shape of DataFrame
+print("a) Shape of DataFrame:")
+print(df.shape)
+
+
+# b) Summary including data types and non-null counts
+print("\nb) Summary of DataFrame:")
+df.info()
+
+
+# c) Descriptive statistics
+print("\nc) Descriptive Statistics:")
+print(df.describe())
+
+
+# d) First 5 rows and last 3 rows
+print("\nd) First 5 rows:")
+print(df.head(5))
+
+print("\nLast 3 rows:")
+print(df.tail(3))
+
+
+# e) Statistics
+
+# i. Average salary
+print("\ni) Average Salary:")
+print(df["Salary"].mean())
+
+# ii. Total bonus
+print("\nii) Total Bonus:")
+print(df["Bonus"].sum())
+
+# iii. Youngest employee's age
+print("\niii) Youngest Employee Age:")
+print(df["Age"].min())
+
+# iv. Highest performance rating
+print("\niv) Highest Performance Rating:")
+print(df["Rating"].max())
+
+
+# f) Sort by Salary in descending order
+print("\nf) DataFrame sorted by Salary:")
+sorted_df = df.sort_values(by="Salary", ascending=False)
+print(sorted_df)
+
+
+# g) Add Performance Category column
+
+def performance_category(rating):
+    if rating >= 4.5:
+        return "Excellent"
+    elif rating >= 4.0:
+        return "Good"
+    else:
+        return "Average"
+
+df["Performance_Category"] = df["Rating"].apply(performance_category)
+
+print("\ng) Performance Category:")
+print(df)
+
+
+# h) Identify missing values
+print("\nh) Missing Values:")
+print(df.isnull().sum())
+
+
+# i) Rename Employee_ID to ID
+df = df.rename(columns={"Employee_ID": "ID"})
+
+print("\ni) After renaming Employee_ID to ID:")
+print(df)
+
+
+# j) Find employees with more than 5 years of experience
+print("\nj-i) Employees with more than 5 years of experience:")
+print(df[df["Years_of_Experience"] > 5])
+
+
+# j-ii) Find employees belonging to IT department
+print("\nj-ii) Employees belonging to IT department:")
+print(df[df["Department"] == "IT"])
+
+
+# k) Add Tax column (10% of Salary)
+df["Tax"] = df["Salary"] * 0.10
+
+print("\nk) DataFrame with Tax:")
+print(df)
+
+
+# l) Save modified DataFrame to a new CSV file
+df.to_csv("modified_employees.csv", index=False)
+
+print("\nl) Modified DataFrame saved as modified_employees.csv")
+
