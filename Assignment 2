@@ -1,0 +1,120 @@
+1- # Create the list
+L = [10, 20, 30, 40, 50, 60, 70, 80]
+
+# i. Add 200 and 300 to L
+L.append(200)
+L.append(300)
+print("After adding 200 and 300:", L)
+
+# ii. Remove 10 and 30 from L
+L.remove(10)
+L.remove(30)
+print("After removing 10 and 30:", L)
+
+# iii. Sort L in ascending order
+L.sort()
+print("Ascending order:", L)
+
+# iv. Sort L in descending order
+L.sort(reverse=True)
+print("Descending order:", L)
+
+2- # Create the tuple
+scores = (45, 89.5, 76, 45.4, 89, 92, 58, 45)
+
+# i. Find highest score and its index
+highest = max(scores)
+highest_index = scores.index(highest)
+
+print("Highest score:", highest)
+print("Index of highest score:", highest_index)
+
+# ii. Find lowest score and count its occurrences
+lowest = min(scores)
+lowest_count = scores.count(lowest)
+
+print("Lowest score:", lowest)
+print("Number of times lowest score appears:", lowest_count)
+
+# iii. Reverse the tuple and return it as a list
+reversed_scores = list(scores[::-1])
+print("Reversed tuple as a list:", reversed_scores)
+
+# iv. Check if 76 is present
+x = float(input("Enter the score to search: "))
+
+if x in scores:
+    print("Score is present.")
+    print("First occurrence index:", scores.index(x))
+else:
+    print("Score is not present.")
+
+3- import random
+
+# Create a list of 100 random numbers between 100 and 900
+numbers = [random.randint(100, 900) for i in range(100)]
+
+# Function to check whether a number is prime
+def is_prime(n):
+    if n < 2:
+        return False
+
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+
+    return True
+
+
+# Find odd numbers
+odd_numbers = [n for n in numbers if n % 2 != 0]
+
+# Find even numbers
+even_numbers = [n for n in numbers if n % 2 == 0]
+
+# Find prime numbers
+prime_numbers = [n for n in numbers if is_prime(n)]
+
+print("Random numbers:", numbers)
+
+print("\nOdd numbers:")
+print(odd_numbers)
+print("Count of odd numbers:", len(odd_numbers))
+
+print("\nEven numbers:")
+print(even_numbers)
+print("Count of even numbers:", len(even_numbers))
+
+print("\nPrime numbers:")
+print(prime_numbers)
+print("Count of prime numbers:", len(prime_numbers))
+
+4- # Create the sets
+A = {34, 56, 78, 90}
+B = {78, 45, 90, 23}
+
+# i. Union of sets
+print("Unique scores of both teams:", A.union(B))
+
+# ii. Intersection of sets
+print("Common scores:", A.intersection(B))
+
+# iii. Symmetric difference
+print("Exclusive scores of each team:", A.symmetric_difference(B))
+
+# iv. Check subset and superset
+print("Is A a subset of B?", A.issubset(B))
+print("Is B a superset of A?", B.issuperset(A))
+
+# v. Remove a specific score X from set A
+X = int(input("Enter the score to remove from set A: "))
+
+if X in A:
+    A.remove(X)
+    print("Score removed successfully.")
+    print("Updated set A:", A)
+else:
+    print("Score is not present in set A.")
+
+5- 
+ 
