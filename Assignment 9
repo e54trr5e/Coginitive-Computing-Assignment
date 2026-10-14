@@ -1,0 +1,154 @@
+
+import re
+import string
+import nltk
+import pandas as pd
+import matplotlib.pyplot as plt
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
+from nltk.probability import FreqDist
+from nltk.stem import PorterStemmer, LancasterStemmer, WordNetLemmatizer
+
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+text = """Technology is changing the world rapidly. Artificial intelligence helps people solve difficult problems.
+Python is a popular programming language used in data science and machine learning.
+I enjoy learning new technologies because they make life easier and more productive.
+In 2026, developers build state-of-the-art applications using intelligent tools.
+Technology connects people and creates opportunities for students around the world"
+
+Q1
+
+print("\nQ1. Original Paragraph (5-6 Sentences):")
+print(text)
+
+clean_text = text.lower()
+clean_text = clean_text.translate(str.maketrans('', '', string.punctuation))
+
+print("\nQ1.1 Convert Text to Lowercase and Remove Punctuation:")
+print(clean_text)
+
+word_tokens = word_tokenize(clean_text)
+sentence_tokens = sent_tokenize(text)
+
+print("\nQ1.2(a) Tokenize Text into Words:")
+print(word_tokens)
+
+print("\nQ1.2(b) Tokenize Text into Sentences:")
+print(sentence_tokens)
+
+stop_words = set(stopwords.words('english'))
+filtered_words = [
+    word for word in word_tokens
+    if word.isalpha() and word not in stop_words
+]
+
+print("\nQ1.3 Remove Stopwords:")
+print(filtered_words)
+
+frequency = FreqDist(filtered_words)
+
+print("\nQ1.4 Word Frequency Distribution (Excluding Stopwords):")
+print(frequency.most_common())
+
+frequency.plot(10, title="Q1.4 Word Frequency Distribution")
+plt.show()
+
+
+Q2
+
+print("\nQ2.1 Tokenized Words After Stopword Removal:")
+print(filtered_words)
+
+porter = PorterStemmer()
+lancaster = LancasterStemmer()
+lemmatizer = WordNetLemmatizer()
+
+porter_results = [porter.stem(word) for word in filtered_words]
+lancaster_results = [lancaster.stem(word) for word in filtered_words]
+lemma_results = [lemmatizer.lemmatize(word) for word in filtered_words]
+
+print("\nQ2.2(a) Porter Stemmer Results:")
+print(porter_results)
+
+print("\nQ2.2(b) Lancaster Stemmer Results:")
+print(lancaster_results)
+
+print("\nQ2.3 Lemmatization Results:")
+print(lemma_results)
+
+print("\nQ2.4 Comparison of Stemming and Lemmatization:")
+
+comparison = pd.DataFrame({
+    "Original Word": filtered_words,
+    "Porter Stemmer": porter_results,
+    "Lancaster Stemmer": lancaster_results,
+    "WordNet Lemmatizer": lemma_results
+})
+
+print(comparison)
+
+
+Q3
+
+print("\nQ3.1 Original Text:")
+print(text)
+
+print("\nQ3.2(a) Extract Words with More Than 5 Letters:")
+long_words = re.findall(r'\b[A-Za-z]{6,}\b', text)
+print(long_words)
+
+print("\nQ3.2(b) Extract All Numbers:")
+numbers = re.findall(r'\b\d+(?:\.\d+)?\b', text)
+print(numbers)
+
+print("\nQ3.2(c) Extract All Capitalized Words:")
+capitalized_words = re.findall(r'\b[A-Z][a-zA-Z]*\b', text)
+print(capitalized_words)
+
+print("\nQ3.3(a) Split Text into Words Containing Only Alphabets:")
+alphabetic_words = re.findall(r'[A-Za-z]+', text)
+print(alphabetic_words)
+
+print("\nQ3.3(b) Extract Words Starting with a Vowel:")
+vowel_words = [
+    word for word in alphabetic_words
+    if word[0].lower() in 'aeiou'
+]
+print(vowel_words)
+
+ Q4: CUSTOM TOKENIZATION AND REGEX-BASED TEXT CLEANING
+
+custom_text = """Technology isn't simple. State-of-the-art tools cost 3.14 dollars.
+Contact us at student@example.com or visit https://example.com.
+Call +91 9876543210 or 123-456-7890 for details."""
+
+print("\nQ4.1 Original Text:")
+print(custom_text)
+
+def custom_tokenize(text):
+    pattern = r"\d+\.\d+|\d+|[A-Za-z]+(?:[-'][A-Za-z]+)*"
+    return re.findall(pattern, text)
+
+print("\nQ4.2 Custom Tokenization:")
+print(custom_tokenize(custom_text))
+
+print("\nQ4.3(a) Replace Email Addresses with <EMAIL>:")
+email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
+email_cleaned = re.sub(email_pattern, '<EMAIL>', custom_text)
+print(email_cleaned)
+
+print("\nQ4.3(b) Replace URLs with <URL>:")
+url_pattern = r'https?://[^\s]+|www\.[^\s]+'
+url_cleaned = re.sub(url_pattern, '<URL>', email_cleaned)
+print(url_cleaned)
+
+print("\nQ4.3(c) Replace Phone Numbers with <PHONE>:")
+phone_pattern = r'\+91\s?\d{10}\b|\b\d{3}-\d{3}-\d{4}\b'
+final_cleaned_text = re.sub(phone_pattern, '<PHONE>', url_cleaned)
+print(final_cleaned_text)
+
