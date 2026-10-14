@@ -1,0 +1,242 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_style("whitegrid")
+
+# ============================================================
+# Q1: E-COMMERCE SALES DATA ANALYSIS
+# ============================================================
+
+# ---------------- PART I: RANDOMIZED SALES DATA GENERATION ----------------
+
+# 1. Initialize random seed using roll number
+roll_no = 123  # Replace 123 with your actual roll number
+np.random.seed(roll_no)
+
+print("=" * 60)
+print("Q1: E-COMMERCE SALES DATA ANALYSIS")
+print("=" * 60)
+
+# 2. Generate sales data for 12 months and 4 categories
+sales_data = np.random.randint(1000, 5001, size=(12, 4))
+
+# 3. Convert NumPy array into Pandas DataFrame
+months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+]
+
+categories = [
+    "Electronics", "Clothing", "Home & Kitchen", "Sports"
+]
+
+df = pd.DataFrame(
+    sales_data,
+    index=months,
+    columns=categories
+)
+
+print("\nOriginal Sales Data:")
+print(df)
+
+# ---------------- PART II: DATA MANIPULATION AND ANALYSIS ----------------
+
+# 1. Display first five rows and summary statistics
+print("\nFirst Five Rows:")
+print(df.head())
+
+print("\nSummary Statistics:")
+print(df.describe())
+
+# 2. Calculate total sales per category and per month
+print("\nTotal Sales Per Category:")
+print(df[categories].sum(axis=0))
+
+print("\nTotal Sales Per Month:")
+print(df[categories].sum(axis=1))
+
+# 3. Calculate average sales growth for each category
+category_growth = df[categories].pct_change() * 100
+
+print("\nAverage Monthly Sales Growth (%) Per Category:")
+print(category_growth.mean())
+
+# 4. Add Total Sales and Growth Rate columns
+df["Total Sales"] = df[categories].sum(axis=1)
+df["Growth Rate"] = df["Total Sales"].pct_change() * 100
+
+print("\nDataFrame with Total Sales and Growth Rate:")
+print(df.round(2))
+
+# 5. Apply discount based on roll number
+if roll_no % 2 == 0:
+    df["Electronics"] = df["Electronics"] * 0.90
+    print("\n10% discount applied to Electronics.")
+else:
+    df["Clothing"] = df["Clothing"] * 0.85
+    print("\n15% discount applied to Clothing.")
+
+# Recalculate totals after discount
+df["Total Sales"] = df[categories].sum(axis=1)
+df["Growth Rate"] = df["Total Sales"].pct_change() * 100
+
+print("\nFinal Sales Data After Discount:")
+print(df.round(2))
+
+# ---------------- PART III: VISUALIZATIONS ----------------
+
+# 1. Monthly sales trends for each category
+plt.figure(figsize=(12, 6))
+
+for category in categories:
+    sns.lineplot(
+        x=df.index,
+        y=df[category],
+        marker="o",
+        label=category
+    )
+
+plt.title("Monthly Sales Trends by Product Category")
+plt.xlabel("Month")
+plt.ylabel("Sales Units")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# 2. Box plots showing sales distribution
+plt.figure(figsize=(10, 6))
+
+sns.boxplot(data=df[categories], palette="Set2")
+
+plt.title("Sales Distribution by Product Category")
+plt.xlabel("Product Category")
+plt.ylabel("Sales Units")
+plt.grid(axis="y")
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================
+# Q2: NUMPY ARRAY OPERATIONS
+# ============================================================
+
+print("\n" + "=" * 60)
+print("Q2: NUMPY ARRAY OPERATIONS")
+print("=" * 60)
+
+array = np.array([
+    [1, -2, 3],
+    [-4, 5, -6]
+])
+
+# i. Element-wise absolute value
+print("\ni. Element-wise Absolute Value:")
+print(np.abs(array))
+
+# ii. Percentiles of flattened array, columns and rows
+print("\nii. Percentiles of Flattened Array (25th, 50th, 75th):")
+print(np.percentile(array, [25, 50, 75]))
+
+print("\nPercentiles of Each Column:")
+print(np.percentile(array, [25, 50, 75], axis=0))
+
+print("\nPercentiles of Each Row:")
+print(np.percentile(array, [25, 50, 75], axis=1))
+
+# iii. Mean, median and standard deviation
+print("\niii. Statistics of Flattened Array:")
+print("Mean:", np.mean(array))
+print("Median:", np.median(array))
+print("Standard Deviation:", np.std(array))
+
+print("\nColumn-wise Statistics:")
+print("Mean:", np.mean(array, axis=0))
+print("Median:", np.median(array, axis=0))
+print("Standard Deviation:", np.std(array, axis=0))
+
+print("\nRow-wise Statistics:")
+print("Mean:", np.mean(array, axis=1))
+print("Median:", np.median(array, axis=1))
+print("Standard Deviation:", np.std(array, axis=1))
+
+
+# ============================================================
+# Q3: FLOOR, CEILING, TRUNCATION AND ROUNDING
+# ============================================================
+
+print("\n" + "=" * 60)
+print("Q3: NUMPY MATHEMATICAL FUNCTIONS")
+print("=" * 60)
+
+a = np.array([-1.8, -1.6, -0.5, 0.5, 1.6, 1.8, 3.0])
+
+print("\nOriginal Array:")
+print(a)
+
+print("\nFloor Values:")
+print(np.floor(a))
+
+print("\nCeiling Values:")
+print(np.ceil(a))
+
+print("\nTruncated Values:")
+print(np.trunc(a))
+
+print("\nRounded Values:")
+print(np.round(a))
+
+
+# ============================================================
+# Q4: SWAP TWO ELEMENTS IN A LIST USING TEMPORARY VARIABLE
+# ============================================================
+
+print("\n" + "=" * 60)
+print("Q4: SWAPPING ELEMENTS IN A LIST")
+print("=" * 60)
+
+my_list = [10, 20, 30, 40, 50]
+
+print("\nOriginal List:", my_list)
+
+# Positions to swap
+pos1 = 1
+pos2 = 3
+
+# Swap using a temporary variable
+temp = my_list[pos1]
+my_list[pos1] = my_list[pos2]
+my_list[pos2] = temp
+
+print("List After Swapping:", my_list)
+
+
+# ============================================================
+# Q5: SWAP TWO ELEMENTS IN A SET BY CONVERTING IT TO A LIST
+# ============================================================
+
+print("\n" + "=" * 60)
+print("Q5: SWAPPING ELEMENTS IN A SET")
+print("=" * 60)
+
+my_set = {10, 20, 30, 40, 50}
+
+print("\nOriginal Set:", my_set)
+
+# Convert set into a list
+my_list = list(my_set)
+
+# Swap first and third elements
+my_list[0], my_list[2] = my_list[2], my_list[0]
+
+print("List After Swapping:", my_list)
+
+# Convert the list back into a set
+my_set = set(my_list)
+
+print("Set After Converting Back:", my_set)
+
+print("\nAssignment Completed Successfully!")
+
