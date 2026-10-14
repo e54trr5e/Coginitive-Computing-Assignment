@@ -1,0 +1,303 @@
+
+import re
+import nltk
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import Counter
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from textblob import TextBlob
+from wordcloud import WordCloud
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+stop_words = set(stopwords.words('english'))
+
+ Q1
+
+text = """Technology is changing our lives every day. Artificial intelligence helps people solve complex problems.
+Python is a popular programming language used in data science and machine learning.
+I enjoy learning new technologies because they make life easier and more productive.
+Modern computers process large amounts of information quickly.
+Technology connects people and creates opportunities for students around the world."""
+
+print("\nQ1. Original Paragraph:\n", text)
+
+clean_text = re.sub(r'[^\w\s]', '', text.lower())
+print("\nQ1.1 Lowercase Text Without Punctuation:\n", clean_text)
+
+words = word_tokenize(clean_text)
+sentences = sent_tokenize(text)
+
+print("\nQ1.2(a) Word Tokenization:\n", words)
+print("\nQ1.2(b) Sentence Tokenization:\n", sentences)
+
+split_words = clean_text.split()
+print("\nQ1.3(a) Python split():\n", split_words)
+print("\nQ1.3(b) NLTK word_tokenize():\n", words)
+print("\nComparison: split() separates text using whitespace, while word_tokenize() handles language tokenization more carefully.")
+
+filtered_words = [w for w in words if w.isalpha() and w not in stop_words]
+print("\nQ1.4 Words After Stopword Removal:\n", filtered_words)
+
+word_frequency = Counter(filtered_words)
+print("\nQ1.5 Word Frequency Distribution:\n", word_frequency)
+
+plt.figure(figsize=(10, 5))
+pd.Series(word_frequency).sort_values(ascending=False).plot(kind='bar')
+plt.title("Q1: Word Frequency Distribution")
+plt.xlabel("Words")
+plt.ylabel("Frequency")
+plt.tight_layout()
+plt.show()
+
+
+Q2
+
+alphabetic_words = re.findall(r'\b[a-zA-Z]+\b', text.lower())
+print("\nQ2.1 Words Containing Only Alphabets:\n", alphabetic_words)
+
+filtered_q2 = [w for w in alphabetic_words if w not in stop_words]
+print("\nQ2.2 Words After Stopword Removal:\n", filtered_q2)
+
+porter = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
+
+stemmed_words = [porter.stem(w) for w in filtered_q2]
+lemmatized_words = [lemmatizer.lemmatize(w) for w in filtered_q2]
+
+print("\nQ2.3 Porter Stemmer Results:\n", stemmed_words)
+print("\nQ2.4 WordNet Lemmatizer Results:\n", lemmatized_words)
+
+print("\nQ2.5 Comparison:")
+print("Stemming cuts words to their root-like forms and may produce non-dictionary words.")
+print("Lemmatization returns meaningful dictionary forms when possible.")
+print("Stemming is useful for fast text matching; lemmatization is preferred when meaningful words matter.")
+
+Q3
+
+texts = [
+    "The new smartphone has an excellent camera and battery.",
+    "The laptop has a fast processor and excellent performance.",
+    "The smartphone battery lasts long and the camera is clear."
+]
+
+print("\nQ3. Input Texts:")
+for i, t in enumerate(texts, 1):
+    print(f"Text {i}: {t}")
+
+count_vectorizer = CountVectorizer(stop_words='english')
+bow_matrix = count_vectorizer.fit_transform(texts)
+
+bow_df = pd.DataFrame(
+    bow_matrix.toarray(),
+    columns=count_vectorizer.get_feature_names_out(),
+    index=["Text 1", "Text 2", "Text 3"]
+)
+
+print("\nQ3.1 Bag of Words Representation:")
+print(bow_df)
+
+tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf_vectorizer.fit_transform(texts)
+terms = tfidf_vectorizer.get_feature_names_out()
+
+tfidf_df = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=terms,
+    index=["Text 1", "Text 2", "Text 3"]
+)
+
+print("\nQ3.2 TF-IDF Scores:")
+print(tfidf_df.round(3))
+
+print("\nQ3.3 Top 3 Keywords for Each Text:")
+for i in range(len(texts)):
+    top_indices = tfidf_matrix[i].toarray().flatten().argsort()[-3:][::-1]
+    top_keywords = [(terms[j], round(tfidf_matrix[i, j], 3)) for j in top_indices]
+    print(f"Text {i + 1}:", top_keywords)
+
+print("Interpretation: TF-IDF assigns higher importance to terms that are informative for a text and less common across the collection.")
+
+
+Q4
+
+technology1 = """Artificial intelligence enables computers to learn from data.
+AI helps automate tasks and make predictions.
+It is used in healthcare and education.
+Machine learning is an important part of AI."""
+
+technology2 = """Blockchain stores information in connected digital blocks.
+It provides transparency and secure transactions.
+Blockchain is used in cryptocurrencies and supply chains.
+It does not work in the same way as machine learning."""
+
+print("\nQ4. Technology 1:\n", technology1)
+print("\nQ4. Technology 2:\n", technology2)
+
+def preprocess(text):
+    text = re.sub(r'[^a-zA-Z\s]', '', text.lower())
+    return [w for w in word_tokenize(text) if w not in stop_words]
+
+tokens1 = preprocess(technology1)
+tokens2 = preprocess(technology2)
+
+print("\nQ4.1 Tokens for Technology 1:\n", tokens1)
+print("\nQ4.1 Tokens for Technology 2:\n", tokens2)
+
+set1 = set(tokens1)
+set2 = set(tokens2)
+
+jaccard = len(set1 & set2) / len(set1 | set2)
+print("\nQ4.2(a) Jaccard Similarity:", round(jaccard, 4))
+
+similarity_vectorizer = TfidfVectorizer(stop_words='english')
+tfidf_pair = similarity_vectorizer.fit_transform([technology1, technology2])
+cosine = cosine_similarity(tfidf_pair[0:1], tfidf_pair[1:2])[0][0]
+
+print("\nQ4.2(b) Cosine Similarity:", round(cosine, 4))
+
+print("\nQ4.2(c) Analysis:")
+print("Jaccard similarity compares the overlap of unique words.")
+print("Cosine similarity compares TF-IDF weighted text vectors.")
+print("Cosine similarity often provides more useful insights when term importance matters; both metrics are useful for different purposes.")
+
+
+Q5
+
+reviews = [
+    "This product is excellent and works beautifully.",
+    "I love this service because it is fast and helpful.",
+    "The product is terrible and the quality is poor.",
+    "I am disappointed with the slow service.",
+    "The product is okay and works as expected."
+]
+
+positive_reviews = []
+
+print("\nQ5.1 Reviews, Polarity and Subjectivity:")
+
+for review in reviews:
+    sentiment = TextBlob(review).sentiment
+    polarity = sentiment.polarity
+    subjectivity = sentiment.subjectivity
+
+    if polarity > 0:
+        label = "Positive"
+        positive_reviews.append(review)
+    elif polarity < 0:
+        label = "Negative"
+    else:
+        label = "Neutral"
+
+    print("\nReview:", review)
+    print("Polarity:", round(polarity, 3))
+    print("Subjectivity:", round(subjectivity, 3))
+    print("Classification:", label)
+
+print("\nQ5.2 Positive Reviews:")
+print(positive_reviews)
+
+print("\nQ5.3 Word Cloud for Positive Reviews:")
+
+if positive_reviews:
+    positive_text = " ".join(positive_reviews)
+    wordcloud = WordCloud(
+        width=800,
+        height=400,
+        background_color='white'
+    ).generate(positive_text)
+
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title("Positive Reviews Word Cloud")
+    plt.show()
+
+
+Q6
+
+training_text = """
+Technology helps people learn new skills and solve problems.
+Python is useful for programming and data analysis.
+Machine learning allows computers to learn from examples.
+Artificial intelligence helps create intelligent applications.
+Students can use technology to improve their knowledge.
+Learning programming requires regular practice and patience.
+Computers process information and perform complex tasks.
+Technology creates opportunities for innovation and creativity.
+Python makes it easier to build useful software applications.
+Students learn better by creating practical projects.
+"""
+
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts([training_text])
+
+total_words = len(tokenizer.word_index) + 1
+sequences = []
+
+for line in training_text.strip().split('\n'):
+    token_list = tokenizer.texts_to_sequences([line])[0]
+    for i in range(1, len(token_list)):
+        sequences.append(token_list[:i + 1])
+
+max_sequence_len = max(len(seq) for seq in sequences)
+sequences = pad_sequences(sequences, maxlen=max_sequence_len, padding='pre')
+
+X_train = sequences[:, :-1]
+y_train = sequences[:, -1]
+
+from tensorflow.keras.utils import to_categorical
+y_train = to_categorical(y_train, num_classes=total_words)
+
+model = Sequential()
+model.add(Embedding(total_words, 32, input_length=max_sequence_len - 1))
+model.add(LSTM(64))
+model.add(Dense(total_words, activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+print("\nQ6.1 Tokenized Training Text:")
+print(tokenizer.word_index)
+
+print("\nQ6.2 Training LSTM Model:")
+model.fit(X_train, y_train, epochs=100, verbose=0)
+
+def generate_text(seed_text, next_words=8):
+    for _ in range(next_words):
+        token_list = tokenizer.texts_to_sequences([seed_text])[0]
+        token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
+        predicted = model.predict(token_list, verbose=0)
+        predicted_index = int(np.argmax(predicted))
+
+        output_word = ""
+        for word, index in tokenizer.word_index.items():
+            if index == predicted_index:
+                output_word = word
+                break
+
+        if not output_word:
+            break
+
+        seed_text += " " + output_word
+
+    return seed_text
+
+print("\nQ6.3 Generated Text:")
+print("Line 1:", generate_text("technology", 8))
+print("Line 2:", generate_text("python", 8))
+print("Line 3:", generate_text("students", 8))
+
+print("\n========== ASSIGNMENT COMPLETED ==========")
